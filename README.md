@@ -1,9 +1,3 @@
-In your editor, the folder tree on line 9 collapsed into a single, unreadable line because the surrounding code fence (the triple backticks `````) was omitted.
-
-When pushed to GitHub, Markdown ignores simple line breaks unless text is enclosed inside a code block. You can also view how GitHub will actually render the page right inside VS Code by pressing **`Ctrl + Shift + V`** (or **`Ctrl + K`** followed by **`V`** for a live side-by-side preview).
-
-Rename the file from `Readme.md` to standard uppercase **`README.md`**, and replace its contents with this cleaner, better-structured layout using tables, clear code blocks, and visual sections:
-
 ```markdown
 # ⚡ AI-Powered CPU Job Scheduler Dashboard
 
