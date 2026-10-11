@@ -81,14 +81,3 @@ Want to take this project further? Here are high-impact features you can build:
 * **I/O Bursts:** Simulate mixed CPU-burst and I/O-wait cycles to model real database and network tasks.
 
 ```
-
-### Next Steps for Git
-
-Now that `requirements.txt` was created[cite: 7] and the README is formatted:
-
-```bash
-git add .
-git commit -m "Add documentation and project requirements"
-git push -u origin main
-
-```
