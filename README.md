@@ -79,5 +79,3 @@ Want to take this project further? Here are high-impact features you can build:
 * **Aging Mechanism:** Implement dynamic priority escalation for waiting tasks to demonstrate starvation prevention.
 * **Closed-Loop Auto-Tuning:** Configure the AI agent to return structured JSON recommendations (e.g., `{"quantum": 4}`) and add an "Apply Suggestion" button that updates the scheduler in one click.
 * **I/O Bursts:** Simulate mixed CPU-burst and I/O-wait cycles to model real database and network tasks.
-
-```
