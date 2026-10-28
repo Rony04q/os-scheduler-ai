@@ -1,94 +1,59 @@
-```markdown
 # ⚡ AI-Powered CPU Job Scheduler Dashboard
 
-An interactive Operating System process scheduling simulator paired with an LLM diagnostic engine. It visualizes CPU bursts, context switches, and queue latencies in real time, using generative AI to detect bottlenecks like process starvation and suggest optimal tuning parameters.
+An interactive Operating System scheduling simulator paired with an LLM diagnostic engine. It simulates six
+CPU-scheduling algorithms, visualizes bursts / waiting / context switches, detects starvation automatically,
+and lets an AI explain **"Why is process X starved?"** and recommend (and one-click apply) parameter tweaks.
 
----
+## Features
 
-## 📂 Project Architecture
+| Area | What you get |
+|---|---|
+| **Schedulers** | FCFS, SJF, SRTF, Priority (non-preemptive & preemptive), Round-Robin |
+| **OS concepts** | Context-switch cost, idle time, preemption counts, priority **aging** (starvation prevention) |
+| **Metrics** | Waiting, turnaround, response, longest wait gap, CPU utilization, throughput, Jain fairness index |
+| **Workloads** | Editable process table, 5 presets (starvation, convoy effect, ...), random generator |
+| **Visuals** | Gantt chart (with context-switch/idle blocks and arrival markers), waiting-vs-burst, ready-queue length, algorithm comparison |
+| **Diagnostics** | Rule-based starvation / convoy / overhead / fairness detection with adjustable threshold |
+| **AI** | Q&A about the schedule, structured tuning suggestions with what-if preview + **Apply** button, downloadable Markdown report |
+| **Resilience** | Gemini → OpenRouter → offline rule-based analyzer (works with no API keys) |
+| **Export / Tests** | CSV export of logs and metrics; pytest suite for the scheduling math |
+
+## Project layout
 
 ```text
-Scheduler_Project/
-├── app.py              # Streamlit dashboard & Plotly timeline visualization
-├── simulator.py        # Discrete-event OS scheduling engine (Round-Robin)
-├── ai_agent.py         # Multi-provider LLM agent (Gemini with OpenRouter fallback)
-├── requirements.txt    # Frozen Python dependencies
-├── .env                # Local API secrets (excluded from Git)
-└── .gitignore          # Prevents venv, .env, and caches from being tracked
-
+os-scheduler-ai/
+├── app.py            # Streamlit dashboard (tabs: timeline, charts, compare, AI, logs)
+├── simulator.py      # Scheduling engine: 6 algorithms, metrics, comparison
+├── analysis.py       # Rule-based starvation/bottleneck detection + offline analyzer
+├── ai_agent.py       # LLM layer (Gemini -> OpenRouter -> offline) : Q&A, JSON tuning, report
+├── workloads.py      # Presets and random workload generator
+├── tests/test_simulator.py
+├── requirements.txt
+├── .env.example      # copy to .env
+└── .devcontainer/devcontainer.json
 ```
 
----
-
-## ⚙️ How It Works
-
-| Stage | Component | What It Does |
-| --- | --- | --- |
-| **1. Simulation** | `simulator.py` | Runs a virtual CPU clock. Processes arrive, consume time slices up to the set quantum, and rotate through the ready queue. |
-| **2. Visualization** | `app.py` | Parses microsecond telemetry into a horizontal Gantt chart to visually expose fragmentation and context-switch frequency. |
-| **3. AI Diagnostics** | `ai_agent.py` | Serializes logs to JSON and prompts the LLM to inspect turnaround times, detect starvation, and suggest scheduler fixes. |
-
----
-
-## 🚀 Quickstart Guide
-
-### 1. Clone & Set Up Environment
+## Quickstart
 
 ```bash
-git clone https://github.com/YourUsername/YourRepoName.git
-cd YourRepoName
-
-# Create and activate virtual environment
 python -m venv venv
-
-# Windows:
-venv\Scripts\activate
-# Mac/Linux:
-source venv/bin/activate
-
-# Install dependencies
+source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
-
-```
-
-### 2. Configure API Keys
-
-Create a `.env` file in the root directory:
-
-```env
-GEMINI_API_KEY=your_gemini_key_here
-OPENROUTER_API_KEY=your_openrouter_key_here
-
-```
-
-### 3. Launch Dashboard
-
-```bash
+cp .env.example .env            # optional: add API keys
 streamlit run app.py
-
+pytest -q tests                 # run the tests
 ```
 
----
+## Demo script (for your viva / presentation)
 
-## 💡 Contribution & Expansion Ideas
+1. Load preset **"Starvation demo (use Priority)"**, choose *Priority (Non-Preemptive)* → P7 is flagged as starved.
+2. AI tab → *"Why is P7 starved?"* → **Analyze**: explains who held the CPU.
+3. **Suggest tuning parameters** → see the what-if preview (aging interval) → **Apply suggestion**.
+4. Starvation warning disappears; open **Compare Algorithms** to justify the choice; download the **report**.
+5. Load **"Convoy effect"** with FCFS, then **"CPU-heavy vs interactive"** with Round-Robin and raise the context-switch cost to show the quantum trade-off.
 
-Want to take this project further? Here are high-impact features you can build:
+## Conventions
 
-* **Algorithm Expansion:** Add Preemptive Priority Scheduling, Shortest Remaining Time First (SRTF), or Multi-Level Feedback Queues (MLFQ).
-* **Context Switch Penalty:** Introduce a configurable 1–2 ms idle CPU penalty on each swap to visualize real-world overhead.
-* **Aging Mechanism:** Implement dynamic priority escalation for waiting tasks to demonstrate starvation prevention.
-* **Closed-Loop Auto-Tuning:** Configure the AI agent to return structured JSON recommendations (e.g., `{"quantum": 4}`) and add an "Apply Suggestion" button that updates the scheduler in one click.
-* **I/O Bursts:** Simulate mixed CPU-burst and I/O-wait cycles to model real database and network tasks.
-
-```
-
-### Next Steps for Git
-
-Now that `requirements.txt` was created[cite: 7] and the README is formatted:
-
-```bash
-git add .
-git commit -m "Add documentation and project requirements"
-git push -u origin main
-
-```
+* Time unit is 1 ms ticks. Lower priority number = higher priority.
+* Aging: every *N* ms a process waits, its priority improves by 1 (the boost sticks once it runs).
+* Context switch: charged whenever the CPU moves to a different process (not after idle).
