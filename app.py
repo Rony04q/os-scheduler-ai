@@ -62,8 +62,13 @@ st.markdown(
     }
 
     /* ---------- Base ---------- */
-    html, body, .stApp, [class*="st-"], button, input, textarea {
+    html, body, .stApp, button, input, textarea {
         font-family: var(--font);
+    }
+    
+    /* Restore Streamlit's native UI icons */
+    .stIconMaterial, .material-symbols-rounded, [data-testid="stIconMaterial"] {
+        font-family: "Material Symbols Rounded" !important;
     }
 
     .stApp {
