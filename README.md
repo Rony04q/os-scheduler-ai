@@ -41,30 +41,19 @@ source venv/bin/activate        # Windows: venv\Scripts\activate
 pip install -r requirements.txt
 cp .env.example .env            # optional: add API keys
 streamlit run app.py
-
+pytest -q tests                 # run the tests
 ```
 
----
+## Demo script (for your viva / presentation)
 
-## 💡 Contribution & Expansion Ideas
+1. Load preset **"Starvation demo (use Priority)"**, choose *Priority (Non-Preemptive)* → P7 is flagged as starved.
+2. AI tab → *"Why is P7 starved?"* → **Analyze**: explains who held the CPU.
+3. **Suggest tuning parameters** → see the what-if preview (aging interval) → **Apply suggestion**.
+4. Starvation warning disappears; open **Compare Algorithms** to justify the choice; download the **report**.
+5. Load **"Convoy effect"** with FCFS, then **"CPU-heavy vs interactive"** with Round-Robin and raise the context-switch cost to show the quantum trade-off.
 
-Want to take this project further? Here are high-impact features you can build:
+## Conventions
 
-* **Algorithm Expansion:** Add Preemptive Priority Scheduling, Shortest Remaining Time First (SRTF), or Multi-Level Feedback Queues (MLFQ).
-* **Context Switch Penalty:** Introduce a configurable 1–2 ms idle CPU penalty on each swap to visualize real-world overhead.
-* **Aging Mechanism:** Implement dynamic priority escalation for waiting tasks to demonstrate starvation prevention.
-* **Closed-Loop Auto-Tuning:** Configure the AI agent to return structured JSON recommendations (e.g., `{"quantum": 4}`) and add an "Apply Suggestion" button that updates the scheduler in one click.
-* **I/O Bursts:** Simulate mixed CPU-burst and I/O-wait cycles to model real database and network tasks.
-
-```
-
-### Next Steps for Git
-
-Now that `requirements.txt` was created[cite: 7] and the README is formatted:
-
-```bash
-git add .
-git commit -m "Add documentation and project requirements"
-git push -u origin main
-
-```
+* Time unit is 1 ms ticks. Lower priority number = higher priority.
+* Aging: every *N* ms a process waits, its priority improves by 1 (the boost sticks once it runs).
+* Context switch: charged whenever the CPU moves to a different process (not after idle).
